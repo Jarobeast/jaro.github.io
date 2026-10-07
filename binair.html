@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Binair stelsel - Jaro zijn website</title>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: light-dark(#dff4ff, #102a38);
+      --surface: light-dark(#ffffff, #183b4d);
+      --surface-soft: light-dark(#eefaff, #204a5e);
+      --text: light-dark(#123047, #f3fbff);
+      --muted: light-dark(#537083, #b9d6e3);
+      --accent: light-dark(#1687c7, #55c7ff);
+      --accent-dark: light-dark(#0b6599, #8cddff);
+      --border: light-dark(#c6e8f7, #376174);
+      --shadow: 0 18px 50px rgb(17 91 124 / 14%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: light-dark(
+        rgb(223 244 255 / 82%),
+        rgb(16 42 56 / 86%)
+      );
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), #5bd4ff);
+      font-size: 18px;
+    }
+
+    .menu {
+      position: relative;
+    }
+
+    .menu-button {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 15px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: 210px;
+      padding: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .dropdown.open {
+      display: grid;
+      gap: 4px;
+    }
+
+    .dropdown a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 11px 12px;
+      border-radius: 9px;
+      font-weight: 600;
+    }
+
+    .dropdown a:hover {
+      background: var(--surface-soft);
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 70px 24px 60px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .eyebrow {
+      color: var(--accent-dark);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(44px, 7vw, 72px);
+      line-height: 1;
+      margin: 0 0 20px;
+      letter-spacing: -.05em;
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: auto;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    section {
+      margin-top: 55px;
+    }
+
+    .section-title {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgb(17 91 124 / 7%);
+      margin-top: 20px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .card p {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .binary-example {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 25px 0;
+      flex-wrap: wrap;
+    }
+
+    .bit {
+      width: 65px;
+      height: 65px;
+      display: grid;
+      place-items: center;
+      background: var(--surface-soft);
+      border: 2px solid var(--accent);
+      border-radius: 14px;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent-dark);
+    }
+
+    .values {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 25px;
+    }
+
+    .value {
+      text-align: center;
+      padding: 18px 10px;
+      background: var(--surface-soft);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .value strong {
+      display: block;
+      font-size: 24px;
+      color: var(--accent-dark);
+    }
+
+    .bonanza {
+      text-align: center;
+    }
+
+    .bonanza img {
+      max-width: 100%;
+      width: 650px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      margin: 20px auto;
+      display: block;
+    }
+
+    .button {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      padding: 13px 20px;
+      border-radius: 12px;
+      font-weight: 800;
+      margin-top: 10px;
+    }
+
+    .button:hover {
+      background: var(--accent-dark);
+    }
+
+    footer {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 24px 40px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .nav {
+        padding: 13px 16px;
+      }
+
+      main {
+        padding: 50px 16px 40px;
+      }
+
+      .values {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <nav class="nav">
+
+    <div class="brand">
+      <div class="logo">J</div>
+      <span>Jaro zijn website</span>
+    </div>
+
+    <div class="menu">
+
+      <button class="menu-button" id="menuButton">
+        Andere pagina's ▾
+      </button>
+
+      <div class="dropdown" id="pageMenu">
+        <a href="index.html">Home</a>
+        <a href="kleurmodellen.html">Kleurmodellen</a>
+        <a href="binair.html">Binair stelsel</a>
+        <a href="compressie.html">Compressie</a>
+      </div>
+
+    </div>
+
+  </nav>
+</header>
+
+
+<main>
+
+  <div class="hero">
+    <div class="eyebrow">Informatica</div>
+
+    <h1>Het binair stelsel 💻</h1>
+
+    <p>
+      Computers werken met heel veel nullen en enen.
+      Dit noemen we het binaire stelsel. Op deze pagina leg ik uit
+      hoe het werkt en hoe je binaire getallen kunt omrekenen.
+    </p>
+  </div>
+
+
+  <section>
+
+    <h2 class="section-title">Wat is het binair stelsel?</h2>
+
+    <div class="card">
+
+      <p>
+        Het binaire stelsel is een getallenstelsel met maar twee cijfers:
+        <strong>0 en 1</strong>. Daarom wordt het ook wel het
+        <strong>2-tallig stelsel</strong> genoemd.
+      </p>
+
+      <p>
+        Computers gebruiken het binaire stelsel om informatie op te slaan
+        en te verwerken. Een computer kan bijvoorbeeld werken met een
+        signaal dat aan of uit staat. Dit kan worden weergegeven als
+        1 of 0.
+      </p>
+
+      <div class="binary-example">
+        <div class="bit">1</div>
+        <div class="bit">0</div>
+        <div class="bit">1</div>
+        <div class="bit">1</div>
+        <div class="bit">0</div>
+      </div>
+
+      <p style="text-align:center;">
+        Dit is bijvoorbeeld een binair getal: <strong>10110</strong>
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <section>
+
+    <h2 class="section-title">Hoe werkt het?</h2>
+
+    <div class="card">
+
+      <p>
+        In het normale decimale stelsel zijn de waarden van rechts naar
+        links 1, 10, 100, 1000 enzovoort.
+      </p>
+
+      <p>
+        In het binaire stelsel verdubbelt de waarde steeds:
+        <strong>1, 2, 4, 8, 16, 32...</strong>
+      </p>
+
+      <div class="values">
+
+        <div class="value">
+          <strong>16</strong>
+          2⁴
+        </div>
+
+        <div class="value">
+          <strong>8</strong>
+          2³
+        </div>
+
+        <div class="value">
+          <strong>4</strong>
+          2²
+        </div>
+
+        <div class="value">
+          <strong>2</strong>
+          2¹
+        </div>
+
+        <div class="value">
+          <strong>1</strong>
+          2⁰
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <section>
+
+    <h2 class="section-title">Een voorbeeld</h2>
+
+    <div class="card">
+
+      <h3>10101 naar een normaal getal</h3>
+
+      <p>
+        We kijken naar de plaatsen van de enen:
+      </p>
+
+      <p style="font-size:20px; text-align:center;">
+        16 &nbsp; 8 &nbsp; 4 &nbsp; 2 &nbsp; 1
+      </p>
+
+      <p style="font-size:20px; text-align:center;">
+        <strong>1 &nbsp; 0 &nbsp; 1 &nbsp; 0 &nbsp; 1</strong>
+      </p>
+
+      <p>
+        De eerste 1 betekent 16, de tweede 1 betekent 4 en de laatste
+        1 betekent 1.
+      </p>
+
+      <p style="font-size:22px; text-align:center;">
+        <strong>16 + 4 + 1 = 21</strong>
+      </p>
+
+      <p style="text-align:center;">
+        Dus <strong>10101 in binair = 21 in het decimale stelsel.</strong>
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <section>
+
+    <h2 class="section-title">Waarom gebruiken computers binair?</h2>
+
+    <div class="card">
+
+      <p>
+        Computers werken met elektronische signalen. Zo'n signaal kan
+        bijvoorbeeld aan of uit zijn. Dat past goed bij de twee waarden
+        van binair: <strong>1 en 0</strong>.
+      </p>
+
+      <p>
+        Met heel veel bits achter elkaar kunnen computers uiteindelijk
+        allerlei soorten informatie opslaan, zoals getallen, tekst,
+        afbeeldingen en geluid.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <section>
+
+    <div class="card bonanza">
+
+      <h2 class="section-title">Binary Bonanza 🎮</h2>
+
+      <p>
+        Wil je zelf oefenen met binaire getallen?
+        Met <strong>Binary Bonanza</strong> kun je op een leuke manier
+        oefenen met het omzetten van getallen naar binair.
+      </p>
+
+      <img
+        src="https://static.wixstatic.com/media/9f58f1_111b533cdae14d46bb89bf2b20b11eec~mv2.jpg/v1/fill/w_692%2Ch_500%2Cal_c%2Cq_90/9f58f1_111b533cdae14d46bb89bf2b20b11eec~mv2.jpg"
+        alt="Voorbeeld van Binary Bonanza">
+
+      <a
+        class="button"
+        href="https://games.penjee.com/binary-bonanza/"
+        target="_blank"
+        rel="noopener noreferrer">
+        Speel Binary Bonanza
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer>
+  © Jaro · Mijn persoonlijke website
+</footer>
+
+
+<script>
+
+  const button = document.getElementById("menuButton");
+  const menu = document.getElementById("pageMenu");
+
+  button.addEventListener("click", () => {
+    menu.classList.toggle("open");
+  });
+
+  document.addEventListener("click", (event) => {
+
+    if (!event.target.closest(".menu")) {
+      menu.classList.remove("open");
+    }
+
+  });
+
+</script>
+
+</body>
+</html>
